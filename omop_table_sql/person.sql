@@ -1,0 +1,1 @@
+select distinct p.* from [{}].[{}].[person] p

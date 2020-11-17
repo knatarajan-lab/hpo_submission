@@ -3,7 +3,7 @@ import csv
 import os
 from constant import delimiter_hpo, quotechar_hpo, pii_table_list, file_name_list
 from change_data_type import change_col_type
-import tqdm
+from tqdm import tqdm
 
 
 def export_to_csv(file_path, query, conn, omop_check_files, file_name, empty_list):

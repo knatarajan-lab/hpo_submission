@@ -3,7 +3,7 @@ from constant import query_path, output_path, delimiter_hpo, quotechar_hpo
 import pandas as pd
 import csv
 from change_data_type import change_col_type
-import tqdm
+from tqdm import tqdm
 
 
 def read_write_person_file(db_properties, conn, omop_files):

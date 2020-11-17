@@ -27,7 +27,7 @@ def main():
                             help='Output folder for submission')
         ARGS = parser.parse_args()
         db_config = configparser.ConfigParser()
-        db_settings_path = ARGS.db_settings_path
+        db_settings_path = ARGS.database_setting_path
         db_config.read(db_settings_path)
         db_settings = db_config.defaults()
         conn = test_conn(db_settings)

@@ -2,7 +2,8 @@
 ## hpo_submission exclusions ##
 ###############################
 _dm_aou.ini
-HPO_submission
+hpo_only_submission_pipeline.ipynb
+HPO_submission/
 # privdate pki-related
 *.jks
 *.pem

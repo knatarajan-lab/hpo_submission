@@ -24,20 +24,23 @@ SELECT [note_id]
       ,[encoding_concept_id]
       ,[language_concept_id]
       ,n.[provider_id]
-      ,v.[visit_occurrence_id]
+      ,null as [visit_occurrence_id]
       --,n.[visit_detail_id]
-      ,v.[visit_end_date]
-      ,v.[visit_start_date]
+      --,null as [visit_end_date]
+      --,null as [visit_start_date]
       ,[note_source_value]
   FROM [{}].[{}].[note] n
-left join visit_occurrence v
-on n.visit_occurrence_id = v.visit_occurrence_id
-and n.person_id = v.person_id
+--left join visit_occurrence v
+--on n.visit_occurrence_id = v.visit_occurrence_id
+--and n.person_id = v.person_id
   left join death d
   on n.person_id = d.person_id
   where (d.death_date > '2015-12-31' 
          and n.note_date <= d.death_date 
          or d.death_date <= '2015-12-31'
-         or d.death_date is null)) a
-WHERE a.visit_end_date is not null
-AND a.person_id in ({})
+         or d.death_date is null)
+         and n.note_text is not null
+         and n.note_text != '') a
+WHERE
+--a.visit_end_date is not null
+ a.person_id in ({})

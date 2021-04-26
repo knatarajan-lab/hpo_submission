@@ -29,7 +29,9 @@ def export_to_csv(file_path, query, conn, omop_check_files, file_name, empty_lis
         with open(file_path, 'w', newline='') as csvfile:
             csv_writer = csv.writer(csvfile, delimiter=delimiter_hpo, quotechar=quotechar_hpo, quoting=csv.QUOTE_ALL)
             for batch in data:
-                if file_name in file_name_list:
+                if (file_name == 'note_text') | (file_name == 'patient_status') :
+                    pass
+                elif file_name in file_name_list:
                     batch = change_col_type(omop_check_files, batch, file_name)
                 else:
                     pass

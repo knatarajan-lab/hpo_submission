@@ -47,5 +47,4 @@ and o.person_id = v.person_id
          and o.observation_date <= d.death_date 
          or d.death_date is null
          or d.death_date <='2015-12-31')) a
-WHERE a.visit_end_date is not null
-AND a.person_id in ({})
+WHERE a.person_id in ({})

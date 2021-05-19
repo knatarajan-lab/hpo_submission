@@ -44,5 +44,4 @@ SELECT c.[condition_occurrence_id]
          and c.condition_start_date <= d.death_date 
          or d.death_date <= '2015-12-31'
          or d.death_date is null)) a
-  WHERE a.visit_end_date is not null
-  and a.person_id in ({})
+WHERE a.person_id in ({})

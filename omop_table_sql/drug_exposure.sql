@@ -59,5 +59,4 @@ where (dea.death_date > '2015-12-31'
          and d.drug_exposure_start_date <= dea.death_date 
          or dea.death_date <= '2015-12-31'
          or dea.death_date is null)) a
-WHERE a.visit_end_date is not null
-AND a.person_id in ({})
+WHERE a.person_id in ({})

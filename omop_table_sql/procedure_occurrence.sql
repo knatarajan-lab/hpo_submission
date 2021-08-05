@@ -8,10 +8,10 @@ SELECT [procedure_occurrence_id]
       ,[quantity]
       ,[provider_id]
       ,[visit_occurrence_id]
-      --,[visit_detail_id]
+      ,[visit_detail_id]
       ,[procedure_source_value]
       ,[procedure_source_concept_id]
-      ,[qualifier_source_value]
+      ,[modifier_source_value]
 FROM(
 SELECT  
 [procedure_occurrence_id]
@@ -24,10 +24,10 @@ SELECT
       ,p.[quantity]
       ,p.[provider_id]
       ,v.[visit_occurrence_id]
-      --,p.[visit_detail_id]
+      ,p.[visit_detail_id]
       ,p.[procedure_source_value]
       ,p.[procedure_source_concept_id]
-      ,p.[qualifier_source_value]
+      ,p.[modifier_source_value]
   FROM [{}].[{}].[procedure_occurrence] p
  left  join [visit_occurrence] v
   on p.visit_occurrence_id = v.visit_occurrence_id

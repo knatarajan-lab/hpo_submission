@@ -3,7 +3,7 @@
 ###############################
 _dm_aou.ini
 HPO_submission/
-
+patient_status/
 # privdate pki-related
 *.jks
 *.pem

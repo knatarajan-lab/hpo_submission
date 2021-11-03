@@ -12,7 +12,7 @@ patient_status_folder = './patient_status/'
 delimiter_hpo = ','
 quotechar_hpo = '"'
 
-empty_table_list = ['care_site', 'provider', 'fact_relationship', 'pii_address', 'pii_email', 'pii_mrn', 'specimen']
+empty_table_list = ['fact_relationship', 'pii_address', 'pii_email', 'pii_mrn', 'specimen']
 pii_table_list = ['pii_name', 'pii_phone_number', 'participant_match']
 
 rows_allowed = 5000

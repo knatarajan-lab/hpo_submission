@@ -3,6 +3,7 @@ cd /project/hpo/hpo_submission/
 
 rm patient_status/patient_status_union.csv
 rm patient_status/patient_status_diff.csv
+rm -r patient_status_old
 cp -r patient_status/ patient_status_old
 cat patient_status_old/*csv > patient_status_old/patient_status_union_old.csv
 

@@ -10,6 +10,7 @@ SELECT [device_exposure_id]
       ,[quantity]
       ,[provider_id]
       ,[visit_occurrence_id]
+      ,[visit_detail_id]
       ,[device_source_value]
       ,[device_source_concept_id]
 FROM [{}].[{}].[device_exposure] de

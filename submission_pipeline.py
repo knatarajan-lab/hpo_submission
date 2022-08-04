@@ -1,7 +1,7 @@
 from db_connection import *
 import argparse
 import configparser
-from constant import file_name_list, empty_table_list
+from constant import table_name_list, empty_table_list
 from omop_format import generate_omop_format
 from extract_person_table import read_write_person_file
 from export_data import export_omop_file
@@ -45,11 +45,10 @@ def main():
         participant_list = read_write_person_file(db_settings, conn, omop_files)
         print("patient_status extraction")
         extract_patient_status(db_settings, conn)
-        for file in file_name_list:
-            export_omop_file(file, query_path, output_path, conn, omop_files, empty_table_list, db_settings, participant_list)
+        for table in table_name_list:
+            export_omop_file(table, query_path, output_path, conn, omop_files, empty_table_list, db_settings, participant_list)
         export_omop_file('patient_status', query_path, output_path_patient_status, conn, omop_files, empty_table_list, db_settings,
                          participant_list)
-        #extract_note_txt()
     except Exception as e:
         print(str(e))
 

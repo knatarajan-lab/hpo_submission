@@ -20,19 +20,17 @@ SELECT [note_id]
       ,[note_type_concept_id]
       ,[note_class_concept_id]
       ,[note_title]
-      ,'NO_DATA' as [note_text]
+      ,[note_text]
       ,[encoding_concept_id]
       ,[language_concept_id]
       ,n.[provider_id]
-      ,null as [visit_occurrence_id]
+      ,[visit_occurrence_id]
       ,n.[visit_detail_id]
-      --,null as [visit_end_date]
-      --,null as [visit_start_date]
       ,[note_source_value]
   FROM [{}].[{}].[note] n
---left join visit_occurrence v
---on n.visit_occurrence_id = v.visit_occurrence_id
---and n.person_id = v.person_id
+    left join visit_occurrence v
+    on n.visit_occurrence_id = v.visit_occurrence_id
+    and n.person_id = v.person_id
   left join death d
   on n.person_id = d.person_id
   where (d.death_date > '2015-12-31' 

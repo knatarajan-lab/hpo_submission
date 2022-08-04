@@ -1,7 +1,7 @@
 import pandas as pd
 import csv
 import os
-from constant import delimiter_hpo, quotechar_hpo, pii_table_list, file_name_list
+from constant import delimiter_hpo, quotechar_hpo, pii_table_list, table_name_list
 from change_data_type import change_col_type
 from tqdm import tqdm
 
@@ -29,9 +29,7 @@ def export_to_csv(file_path, query, conn, omop_check_files, file_name, empty_lis
         with open(file_path, 'w', newline='') as csvfile:
             csv_writer = csv.writer(csvfile, delimiter=delimiter_hpo, quotechar=quotechar_hpo, quoting=csv.QUOTE_ALL)
             for batch in data:
-                if (file_name == 'note_text') | (file_name == 'patient_status') :
-                    pass
-                elif file_name in file_name_list:
+                if file_name in table_name_list:
                     batch = change_col_type(omop_check_files, batch, file_name)
                 else:
                     pass
@@ -41,15 +39,24 @@ def export_to_csv(file_path, query, conn, omop_check_files, file_name, empty_lis
                 for row in tqdm(batch.itertuples(index=False), total=len(batch)):
                     csv_writer.writerow(row)
 
+#TODO: Create a function to export note table into jsonl
+def export_to_jsonl()
+    return
 
-def export_omop_file(file_name, query_path, output_path, connection, omop_check_files, empty_list, db_properties, person_list):
-    query = open(os.path.join(query_path, file_name + '.sql'), 'r')
+
+def export_omop_file(table_name, query_path, output_path, connection, omop_check_files, empty_list, db_properties, person_list):
+    query = open(os.path.join(query_path, f'{table_name}.sql'), 'r')
     query_script = query.read()
     if 'person_id' in query_script:
         query_script = query_script.format(db_properties['database'], db_properties['schema'], person_list)
     else:
         query_script = query_script.format(db_properties['database'], db_properties['schema'])
-    output_file_path = output_path + file_name + '.csv'
-    export_to_csv(output_file_path, query_script, connection, omop_check_files, file_name, empty_list)
+    if table_name == 'note':
+        output_file_path = f'{output_path}{table_name}.jsonl'
+        export_to_jsonl(output_file_path)
+
+    else:
+        output_file_path = f'{output_path}{table_name}.csv'
+        export_to_csv(output_file_path, query_script, connection, omop_check_files, table_name, empty_list)
     query.close()
-    return file_name + '.csv file exported'
+    return f'{table_name}.csv file exported'

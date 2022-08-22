@@ -69,8 +69,6 @@ def export_to_jsonl(file_path, query, conn, omop_check_files, file_name, empty_l
 def export_omop_file(table_name, query_path, output_path, connection, omop_check_files, empty_list, db_properties, person_list):
     query = open(os.path.join(query_path, f'{table_name}.sql'), 'r')
     query_script = query.read()
-    if table_name == 'patient_status':
-        output_path = ARGS.output_folder_patient_status
     if 'person_id' in query_script:
         query_script = query_script.format(db_properties['database'], db_properties['schema'], person_list)
     else:

@@ -2,7 +2,7 @@
 table_name_list = ['care_site', 'condition_occurrence', 'death', 'device_exposure', 'drug_exposure',
                    'fact_relationship', 'location', 'measurement', 'note', 'observation',
                    'procedure_occurrence', 'visit_occurrence', 'visit_detail', 'provider', 'pii_address', 'pii_email',
-                   'pii_name', 'pii_mrn', 'pii_phone_number', 'specimen', 'participant_match']
+                   'pii_name', 'pii_mrn', 'pii_phone_number', 'specimen', 'participant_match', 'patient_status']
 
 root_path = './aou_ehr_validator/resources/omop'
 query_path = './omop_table_sql'

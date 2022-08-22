@@ -45,8 +45,10 @@ def main():
         participant_list = read_write_person_file(db_settings, conn, omop_files)
         print("patient_status extraction")
         extract_patient_status(db_settings, conn)
+        # for each required table for All of Us export table contents
         for table in table_name_list:
             export_omop_file(table, query_path, output_path, conn, omop_files, empty_table_list, db_settings, participant_list)
+        # TODO: Add patient status to table_name_list and add conditional in export_omop_file for output path
         export_omop_file('patient_status', query_path, output_path_patient_status, conn, omop_files, empty_table_list, db_settings,
                          participant_list)
     except Exception as e:

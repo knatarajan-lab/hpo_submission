@@ -62,7 +62,12 @@ def export_to_csv(file_path, query, conn, omop_check_files, file_name, empty_lis
 
 #TODO: Create a function to export note table into jsonl
 def export_to_jsonl(file_path, query, conn, omop_check_files, file_name, empty_list):
-    data = pd.read_sql(query, conn)
+    df_notes = pd.read_sql_query(query, conn)
+    json_notes = df_notes.to_json(orient='records', lines=True)
+    with open(file_path, 'w', newline='') as json_file:
+        json_file.write(json_notes)
+        json_file.close()
+
     
 
 
@@ -75,7 +80,7 @@ def export_omop_file(table_name, query_path, output_path, connection, omop_check
         query_script = query_script.format(db_properties['database'], db_properties['schema'])
     if table_name == 'note':
         output_file_path = f'{output_path}{table_name}.jsonl'
-        export_to_jsonl(output_file_path)
+        export_to_jsonl(output_file_path, query_script, connection, omop_check_files, table_name, empty_list)
     else:
         output_file_path = f'{output_path}{table_name}.csv'
         export_to_csv(output_file_path, query_script, connection, omop_check_files, table_name, empty_list)

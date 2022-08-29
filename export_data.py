@@ -60,9 +60,64 @@ def export_to_csv(file_path, query, conn, omop_check_files, file_name, empty_lis
                     csv_writer.writerow(row)
 
 
-#TODO: Create a function to export note table into jsonl
-def export_to_jsonl(file_path, query, conn, omop_check_files, file_name, empty_list):
-    data = pd.read_sql(query, conn)
+def clean_note_text(df):
+    ''' 
+    This function will take in a dataframe and replace extra carriage returns found in the note_text column of certain notes
+
+    Args:
+        df: dataframe to be cleaned
+    
+    Returns:
+        df: dataframe with carriage returns removed
+
+    Raises:
+        N/A
+    
+    '''
+    if 'note_text' in df:
+        df['note_text'] = df['note_text'].str.replace('&#x0D;','\n')
+        df['note_text'] = df['note_text'].str.replace('#x0D;','')
+
+    return df
+
+
+def format_json(df):
+    ''' 
+    This function takes in a list of dataframes and paritions rows that require removal of erroneous characters from the note_text column. The replaced/formatted text is then reinserted into the data frame row and then the entire data frame is converted to a json object string.
+
+    Args:
+        df: dataframe to be converted to json
+    
+    Returns:
+        json_output: string output by pandas.to_json containing a json string of the following format {key1: value1, key2:value2, ...}
+
+    Raises:
+        N/A
+    
+    '''
+    # Return tuple (x,y) -> (boolean, df_partition)
+    dataframes= [(x,y) for x, y in df.groupby(df['note_source_value'].str.contains('ORDER_PROC_ID:'))]
+    # Go through each tuple
+    formatted_df = pd.DataFrame()
+    for conditional, df_group in dataframes:
+        # If the first tuple's boolean is True this means the df needs to be reformatted and concatenated to the final df
+        if conditional:
+            reformatted_df = clean_note_text(df_group)
+            formatted_df = formatted_df.append(reformatted_df)
+        # Otherwise the df is already formatted correctly and can be concatenated as is
+        else:
+            formatted_df = formatted_df.append(df_group)
+    json = formatted_df.to_json(orient='records', date_format='iso', force_ascii=True, lines=True)
+    return json
+
+
+def export_to_jsonl(file_path, query, conn):
+    df_notes = pd.read_sql_query(query, conn)
+    json_notes = format_json(df_notes)
+    with open(file_path, 'w', newline='') as json_file:
+        json_file.write(json_notes)
+        json_file.close()
+
     
 
 
@@ -75,7 +130,7 @@ def export_omop_file(table_name, query_path, output_path, connection, omop_check
         query_script = query_script.format(db_properties['database'], db_properties['schema'])
     if table_name == 'note':
         output_file_path = f'{output_path}{table_name}.jsonl'
-        export_to_jsonl(output_file_path)
+        export_to_jsonl(output_file_path, query_script, connection)
     else:
         output_file_path = f'{output_path}{table_name}.csv'
         export_to_csv(output_file_path, query_script, connection, omop_check_files, table_name, empty_list)

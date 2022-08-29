@@ -51,6 +51,9 @@ patient_status/
 *.so
 \#*\#
 *.out           # gcc-generated binary
+for_json_output_test.txt
+json_output_test.txt
+note_output/
 
 # logs
 log/

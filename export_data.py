@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 import csv
 import os
 from constant import delimiter_hpo, quotechar_hpo, pii_table_list, table_name_list
@@ -112,7 +113,7 @@ def format_json(df):
 
 
 def export_to_jsonl(file_path, query, conn):
-    df_notes = pd.read_sql_query(query, conn)
+    df_notes = pd.read_sql_query(query, conn, dtype={'visit_occurrence_id':'Int64'})
     json_notes = format_json(df_notes)
     with open(file_path, 'w', newline='') as json_file:
         json_file.write(json_notes)

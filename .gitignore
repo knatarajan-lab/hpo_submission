@@ -2,7 +2,6 @@
 ## hpo_submission exclusions ##
 ###############################
 _dm_aou.ini
-constant.py
 HPO_submission/
 patient_status/
 # privdate pki-related

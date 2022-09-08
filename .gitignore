@@ -53,6 +53,8 @@ patient_status/
 for_json_output_test.txt
 json_output_test.txt
 note_output/
+a_dm_aou.ini
+problem_note.md
 
 # logs
 log/

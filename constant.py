@@ -4,7 +4,7 @@ table_name_list = ['care_site', 'condition_occurrence', 'death', 'device_exposur
                    'procedure_occurrence', 'visit_occurrence', 'visit_detail', 'provider', 'pii_address', 'pii_email',
                    'pii_name', 'pii_mrn', 'pii_phone_number', 'specimen', 'participant_match', 'patient_status']
 
-root_path = './aou_ehr_validator/resources/omop'
+root_path = './aou-ehr-file-check/resources/omop'
 query_path = './omop_table_sql'
 output_path = './HPO_submission/'
 note_txt_folder = './HPO_submission/clinical_documents/'

@@ -24,7 +24,7 @@ SELECT [note_id]
       ,[encoding_concept_id]
       ,[language_concept_id]
       ,n.[provider_id]
-      ,[visit_occurrence_id]
+      ,n.[visit_occurrence_id]
       ,n.[visit_detail_id]
       ,[note_source_value]
   FROM [{}].[{}].[note] n

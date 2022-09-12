@@ -1,5 +1,5 @@
 
-  SELECT TOP(2)[note_id]
+  SELECT TOP (100)[note_id]
       ,n.[person_id]
       ,[note_date]
       ,[note_datetime]
@@ -13,8 +13,8 @@
       ,n.[visit_occurrence_id]
       ,n.[visit_detail_id]
       ,[note_source_value]
-  FROM [ohdsi_cumc_hpo].[dbo].[note] n
-    left join [ohdsi_cumc_hpo].[dbo].visit_occurrence v
+  FROM [ohdsi_cumc_epic_merge_pending].[dbo].[note] n
+    left join [ohdsi_cumc_epic_merge_pending].[dbo].[visit_occurrence] v
     on n.visit_occurrence_id = v.visit_occurrence_id
     and n.person_id = v.person_id
   left join death d

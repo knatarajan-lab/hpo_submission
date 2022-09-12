@@ -140,10 +140,10 @@ def export_omop_file(table_name, query_path, output_path, connection, omop_check
     else:
         query_script = query_script.format(db_properties['database'], db_properties['schema'])
     if table_name == 'note':
-        output_file_path = f'{output_path}{table_name}.jsonl'
+        output_file_path = os.path.join(output_path, f'{table_name}.jsonl')
         export_to_jsonl(output_file_path, query_script, connection)
     else:
-        output_file_path = f'{output_path}{table_name}.csv'
+        output_file_path = os.path.join(output_path, f'{table_name}.csv')
         export_to_csv(output_file_path, query_script, connection, omop_check_files, parse_dates, table_name, empty_list)
     query.close()
     return f'{table_name}.csv file exported'

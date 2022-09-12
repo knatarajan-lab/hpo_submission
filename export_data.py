@@ -115,7 +115,6 @@ def format_json(df):
             formatted_df = formatted_df.append(df_group)
 
     formatted_df['note_text'] = formatted_df['note_text'].apply(spaces_to_newline)
-    print(formatted_df['note_text'])
     json = formatted_df.to_json(orient='records', date_format='iso', force_ascii=True, lines=True)
     return json
 

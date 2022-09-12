@@ -42,7 +42,7 @@ def main():
         output_path = ARGS.output_folder
         output_path_patient_status = ARGS.output_folder_patient_status
         omop_files, parse_dates = generate_omop_format(root_path)
-        participant_list = read_write_person_file(db_settings, conn, omop_files)
+        participant_list = read_write_person_file(db_settings, conn, omop_files, parse_dates)
         print("patient_status extraction")
         extract_patient_status(db_settings, conn)
         # for each required table for All of Us export table contents

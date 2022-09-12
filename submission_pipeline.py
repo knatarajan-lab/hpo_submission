@@ -41,14 +41,15 @@ def main():
         root_path = ARGS.resource_folder
         output_path = ARGS.output_folder
         output_path_patient_status = ARGS.output_folder_patient_status
-        omop_files = generate_omop_format(root_path)
+        omop_files, parse_dates = generate_omop_format(root_path)
         participant_list = read_write_person_file(db_settings, conn, omop_files)
         print("patient_status extraction")
         extract_patient_status(db_settings, conn)
         # for each required table for All of Us export table contents
         for table in table_name_list:
             current_output_path = output_path_patient_status if table == 'patient_status' else output_path
-            export_omop_file(table, query_path, current_output_path, conn, omop_files, empty_table_list, db_settings, participant_list)
+            export_omop_file(table, query_path, current_output_path, conn, omop_files, parse_dates, empty_table_list,
+                             db_settings, participant_list)
 
     except Exception as e:
         print(str(e))

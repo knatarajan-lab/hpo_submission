@@ -9,7 +9,7 @@ from change_data_type import change_col_type
 from tqdm import tqdm
 
 
-def export_to_csv(file_path, query, conn, omop_check_files, file_name, empty_list):
+def export_to_csv(file_path, query, conn, omop_check_files, parse_dates, file_name, empty_list):
     ''' 
     This function creates csv output for the given file input. The resulting output is determined by the kind of table the file name is associated with.
 
@@ -29,14 +29,14 @@ def export_to_csv(file_path, query, conn, omop_check_files, file_name, empty_lis
     print('Start exporting {}...'.format(file_name))
     # if it is an empty table just write column headers
     if file_name in empty_list:
-        data = pd.read_sql(query, conn)
+        data = pd.read_sql_query(query, conn)
         with open(file_path, 'w', newline='') as csvfile:
             csv_writer = csv.writer(csvfile, delimiter=delimiter_hpo, quotechar=quotechar_hpo, quoting=csv.QUOTE_ALL)
             csv_writer.writerow(data.columns)
     # if it contains PII do not check data types
     # TODO: combine with else condition (check data types)
     elif file_name in pii_table_list:
-        data = pd.read_sql(query, conn)
+        data = pd.read_sql_query(query, conn)
         is_header_added = False
         with open(file_path, 'w', newline='') as csvfile:
             csv_writer = csv.writer(csvfile, delimiter=delimiter_hpo, quotechar=quotechar_hpo, quoting=csv.QUOTE_ALL)
@@ -47,15 +47,17 @@ def export_to_csv(file_path, query, conn, omop_check_files, file_name, empty_lis
                 csv_writer.writerow(row)
     # otherwise validate data types for all columns and output csv
     else:
-        data = pd.read_sql(query, conn, chunksize=50000)
+        datatypes = omop_check_files[file_name]
+        parse_dates_list = parse_dates[file_name]
+        data = pd.read_sql_query(query, conn, dtype=datatypes, parse_dates=parse_dates_list, chunksize=50000)
         is_header_added = False
         with open(file_path, 'w', newline='') as csvfile:
             csv_writer = csv.writer(csvfile, delimiter=delimiter_hpo, quotechar=quotechar_hpo, quoting=csv.QUOTE_ALL)
             for batch in data:
-                if file_name in table_name_list:
-                    batch = change_col_type(omop_check_files, batch, file_name)
-                else:
-                    pass
+                # if file_name in table_name_list:
+                #     batch = change_col_type(omop_check_files, batch, file_name)
+                # else:
+                #     pass
                 if not is_header_added:
                     csv_writer.writerow(batch.columns)
                     is_header_added = True
@@ -130,10 +132,8 @@ def export_to_jsonl(file_path, query, conn):
         json_file.write(json_notes)
         json_file.close()
 
-    
 
-
-def export_omop_file(table_name, query_path, output_path, connection, omop_check_files, empty_list, db_properties, person_list):
+def export_omop_file(table_name, query_path, output_path, connection, omop_check_files, parse_dates, empty_list, db_properties, person_list):
     query = open(os.path.join(query_path, f'{table_name}.sql'), 'r')
     query_script = query.read()
     if 'person_id' in query_script:
@@ -145,6 +145,6 @@ def export_omop_file(table_name, query_path, output_path, connection, omop_check
         export_to_jsonl(output_file_path, query_script, connection)
     else:
         output_file_path = f'{output_path}{table_name}.csv'
-        export_to_csv(output_file_path, query_script, connection, omop_check_files, table_name, empty_list)
+        export_to_csv(output_file_path, query_script, connection, omop_check_files, parse_dates, table_name, empty_list)
     query.close()
     return f'{table_name}.csv file exported'

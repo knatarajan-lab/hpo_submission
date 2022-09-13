@@ -1,4 +1,4 @@
-SELECT TOP (1000) [measurement_id]
+SELECT [measurement_id]
       ,m.[person_id]
       ,[measurement_concept_id]
       ,[measurement_date]

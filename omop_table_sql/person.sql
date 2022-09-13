@@ -1,1 +1,2 @@
-select distinct p.* from [{}].[{}].[person] p
+SELECT DISTINCT p.*
+FROM [{}].[{}].[person] p

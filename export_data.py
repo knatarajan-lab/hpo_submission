@@ -1,10 +1,11 @@
 from distutils.command.clean import clean
 import pandas as pd
 import numpy as np
+import math
 import csv
 import os
 import re
-from constant import delimiter_hpo, quotechar_hpo, pii_table_list, table_name_list
+from constant import delimiter_hpo, quotechar_hpo, pii_table_list, table_name_list, rows_allowed
 from change_data_type import change_col_type
 from tqdm import tqdm
 
@@ -30,39 +31,29 @@ def export_to_csv(file_path, query, conn, omop_check_files, parse_dates, file_na
     # if it is an empty table just write column headers
     if file_name in empty_list:
         data = pd.read_sql_query(query, conn)
-        with open(file_path, 'w', newline='') as csvfile:
-            csv_writer = csv.writer(csvfile, delimiter=delimiter_hpo, quotechar=quotechar_hpo, quoting=csv.QUOTE_ALL)
-            csv_writer.writerow(data.columns)
+        data.to_csv(file_path, mode='w', sep=',', quoting=csv.QUOTE_NONNUMERIC, quotechar=quotechar_hpo, doublequote=True)
+
     # if it contains PII do not check data types
     # TODO: combine with else condition (check data types)
     elif file_name in pii_table_list:
         data = pd.read_sql_query(query, conn)
-        is_header_added = False
-        with open(file_path, 'w', newline='') as csvfile:
-            csv_writer = csv.writer(csvfile, delimiter=delimiter_hpo, quotechar=quotechar_hpo, quoting=csv.QUOTE_ALL)
-            if not is_header_added:
-                csv_writer.writerow(data.columns)
-                is_header_added = True
-            for row in tqdm(data.itertuples(index=False), total=data.shape[0]):
-                csv_writer.writerow(row)
+        chunks = np.array_split(data.index, math.ceil(data.shape[0]/rows_allowed))
+        for chunk, subset in enumerate(tqdm(chunks)):
+            if chunk == 0:
+                subset.to_csv(file_path, mode='w', sep=',', quoting=csv.QUOTE_NONNUMERIC, quotechar=quotechar_hpo, doublequote=True)
+            else:
+                subset.to_csv(file_path, mode='a', header=False, sep=',', quoting=csv.QUOTE_NONNUMERIC, quotechar=quotechar_hpo, doublequote=True)
+
     # otherwise validate data types for all columns and output csv
     else:
         datatypes = omop_check_files[file_name]
         parse_dates_list = parse_dates[file_name]
-        data = pd.read_sql_query(query, conn, dtype=datatypes, parse_dates=parse_dates_list, chunksize=50000)
-        is_header_added = False
-        with open(file_path, 'w', newline='') as csvfile:
-            csv_writer = csv.writer(csvfile, delimiter=delimiter_hpo, quotechar=quotechar_hpo, quoting=csv.QUOTE_ALL)
-            for batch in data:
-                # if file_name in table_name_list:
-                #     batch = change_col_type(omop_check_files, batch, file_name)
-                # else:
-                #     pass
-                if not is_header_added:
-                    csv_writer.writerow(batch.columns)
-                    is_header_added = True
-                for row in tqdm(batch.itertuples(index=False), total=len(batch)):
-                    csv_writer.writerow(row)
+        chunks = pd.read_sql_query(query, conn, dtype=datatypes, parse_dates=parse_dates_list, chunksize=rows_allowed)
+        for chunk, subset in enumerate(tqdm(chunks)):
+            if chunk == 0:
+                subset.to_csv(file_path, mode='w', sep=',', quoting=csv.QUOTE_NONNUMERIC, quotechar=quotechar_hpo, doublequote=True)
+            else:
+                subset.to_csv(file_path, mode='a', header=False, sep=',', quoting=csv.QUOTE_NONNUMERIC, quotechar=quotechar_hpo, doublequote=True)
 
 
 def clean_note_text(df):

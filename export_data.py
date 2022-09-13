@@ -40,9 +40,9 @@ def export_to_csv(file_path, query, conn, omop_check_files, parse_dates, file_na
         chunks = np.array_split(data.index, math.ceil(data.shape[0]/rows_allowed))
         for chunk, subset in enumerate(tqdm(chunks)):
             if chunk == 0:
-                subset.to_csv(file_path, mode='w', sep=',', quoting=csv.QUOTE_NONNUMERIC, quotechar=quotechar_hpo, doublequote=True)
+                data.iloc[subset].to_csv(file_path, mode='w', sep=',', quoting=csv.QUOTE_NONNUMERIC, quotechar=quotechar_hpo, doublequote=True)
             else:
-                subset.to_csv(file_path, mode='a', header=False, sep=',', quoting=csv.QUOTE_NONNUMERIC, quotechar=quotechar_hpo, doublequote=True)
+                data.iloc[subset].to_csv(file_path, mode='a', header=False, sep=',', quoting=csv.QUOTE_NONNUMERIC, quotechar=quotechar_hpo, doublequote=True)
 
     # otherwise validate data types for all columns and output csv
     else:

@@ -1,4 +1,4 @@
-SELECT TOP (1000) [note_id]
+SELECT [note_id]
       ,[person_id]
       ,[note_date]
       ,[note_datetime]

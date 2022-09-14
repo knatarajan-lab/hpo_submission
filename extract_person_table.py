@@ -19,10 +19,11 @@ def read_write_person_file(db_properties, conn, omop_files, parse_dates):
 
     chunks = np.array_split(person_table.index, math.ceil(person_table.shape[0]/rows_allowed))
     for chunk, subset in enumerate(tqdm(chunks)):
+        person_table = person_table.replace('None', '')
         if chunk == 0:
-            person_table.iloc[subset].to_csv(os.path.join(output_path,'person.csv'), mode='w', sep=',', quoting=csv.QUOTE_NONNUMERIC, quotechar=quotechar_hpo, doublequote=True)
+            person_table.iloc[subset].to_csv(os.path.join(output_path,'person.csv'), index=False, mode='w', sep=',', quoting=csv.QUOTE_NONNUMERIC, quotechar=quotechar_hpo, doublequote=True)
         else:
-            person_table.iloc[subset].to_csv(os.path.join(output_path,'person.csv'), mode='a', header=False, sep=',', quoting=csv.QUOTE_NONNUMERIC, quotechar=quotechar_hpo, doublequote=True)
+            person_table.iloc[subset].to_csv(os.path.join(output_path,'person.csv'), index=False, mode='a', header=False, sep=',', quoting=csv.QUOTE_NONNUMERIC, quotechar=quotechar_hpo, doublequote=True)
 
     print("Person table is written into database")
     return person_list

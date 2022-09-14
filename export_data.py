@@ -31,7 +31,7 @@ def export_to_csv(file_path, query, conn, omop_check_files, parse_dates, file_na
     # if it is an empty table just write column headers
     if file_name in empty_list:
         data = pd.read_sql_query(query, conn)
-        data.to_csv(file_path, mode='w', sep=',', quoting=csv.QUOTE_NONNUMERIC, quotechar=quotechar_hpo, doublequote=True)
+        data.to_csv(file_path, index=False, mode='w', sep=',', quoting=csv.QUOTE_NONNUMERIC, quotechar=quotechar_hpo, doublequote=True)
 
     # if it contains PII do not check data types
     # TODO: combine with else condition (check data types)
@@ -40,9 +40,9 @@ def export_to_csv(file_path, query, conn, omop_check_files, parse_dates, file_na
         chunks = np.array_split(data.index, math.ceil(data.shape[0]/rows_allowed))
         for chunk, subset in enumerate(tqdm(chunks)):
             if chunk == 0:
-                data.iloc[subset].to_csv(file_path, mode='w', sep=',', quoting=csv.QUOTE_NONNUMERIC, quotechar=quotechar_hpo, doublequote=True)
+                data.iloc[subset].to_csv(file_path, index=False, mode='w', sep=',', quoting=csv.QUOTE_NONNUMERIC, quotechar=quotechar_hpo, doublequote=True)
             else:
-                data.iloc[subset].to_csv(file_path, mode='a', header=False, sep=',', quoting=csv.QUOTE_NONNUMERIC, quotechar=quotechar_hpo, doublequote=True)
+                data.iloc[subset].to_csv(file_path, index=False, mode='a', header=False, sep=',', quoting=csv.QUOTE_NONNUMERIC, quotechar=quotechar_hpo, doublequote=True)
 
     # otherwise validate data types for all columns and output csv
     else:
@@ -50,10 +50,11 @@ def export_to_csv(file_path, query, conn, omop_check_files, parse_dates, file_na
         parse_dates_list = parse_dates[file_name]
         chunks = pd.read_sql_query(query, conn, dtype=datatypes, parse_dates=parse_dates_list, chunksize=rows_allowed)
         for chunk, subset in enumerate(tqdm(chunks)):
+            subset = subset.replace('None', '')
             if chunk == 0:
-                subset.to_csv(file_path, mode='w', sep=',', quoting=csv.QUOTE_NONNUMERIC, quotechar=quotechar_hpo, doublequote=True)
+                subset.to_csv(file_path, index=False, mode='w', sep=',', quoting=csv.QUOTE_NONNUMERIC, quotechar=quotechar_hpo, doublequote=True)
             else:
-                subset.to_csv(file_path, mode='a', header=False, sep=',', quoting=csv.QUOTE_NONNUMERIC, quotechar=quotechar_hpo, doublequote=True)
+                subset.to_csv(file_path, index=False, mode='a', header=False, sep=',', quoting=csv.QUOTE_NONNUMERIC, quotechar=quotechar_hpo, doublequote=True)
 
 
 def clean_note_text(df):

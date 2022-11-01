@@ -1,7 +1,7 @@
 select
 provider_id,
-provider_name,
-NPI as npi,
+'NO INFO' as provider_name,
+'NO INFO' as npi,
 DEA as dea,
 specialty_concept_id,
 care_site_id,

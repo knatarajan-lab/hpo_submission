@@ -5,8 +5,11 @@ import pandas as pd
 
 NYC = tz.gettz('America/New_York')
 
-
+#TODO: Add the data format enforcement while loading data from sql
 def change_col_type(omop_check_files, df, file_name):
+    '''
+    Enforce column types
+    '''
     for col in df.columns:
         col_type = omop_check_files[file_name][col]
         if col_type == 'string':

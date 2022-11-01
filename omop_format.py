@@ -5,6 +5,18 @@ from typing import Dict, Any
 
 
 def generate_omop_format(root_path):
+    '''
+    Takes in JSON files and outputs dictionary of column names and their associated data types
+
+    Args:
+        root_path: ./aou_ehr_validator/resources/omop
+
+    Returns:
+        omop_files: dictionary of column names and their data type
+
+    Raises:
+        N/A
+    '''
     all_json = glob.glob(f'{root_path}/*.json', recursive=True)
     omop_files = {}
     pattern = "omop/(.*?).json"

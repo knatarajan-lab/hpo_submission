@@ -1,16 +1,17 @@
 from distutils.command.clean import clean
 import pandas as pd
 import numpy as np
+import math
 import csv
 import os
 import re
-from constant import delimiter_hpo, quotechar_hpo, pii_table_list, table_name_list
+from constant import delimiter_hpo, quotechar_hpo, pii_table_list, table_name_list, rows_allowed
 from change_data_type import change_col_type
 from tqdm import tqdm
 
 
-def export_to_csv(file_path, query, conn, omop_check_files, file_name, empty_list):
-    ''' 
+def export_to_csv(file_path, query, conn, omop_check_files, parse_dates, file_name, empty_list):
+    '''
     This function creates csv output for the given file input. The resulting output is determined by the kind of table the file name is associated with.
 
     Args:
@@ -18,64 +19,57 @@ def export_to_csv(file_path, query, conn, omop_check_files, file_name, empty_lis
         file_path: output folder + file_name
         conn: db connection
         omop_check_files: json file to check datatype
-    
+
     Returns:
         N/A
 
     Raises:
         N/A
-    
+
     '''
     print('Start exporting {}...'.format(file_name))
     # if it is an empty table just write column headers
     if file_name in empty_list:
-        data = pd.read_sql(query, conn)
-        with open(file_path, 'w', newline='') as csvfile:
-            csv_writer = csv.writer(csvfile, delimiter=delimiter_hpo, quotechar=quotechar_hpo, quoting=csv.QUOTE_ALL)
-            csv_writer.writerow(data.columns)
+        data = pd.read_sql_query(query, conn)
+        data.to_csv(file_path, index=False, mode='w', sep=',', quoting=csv.QUOTE_NONNUMERIC, quotechar=quotechar_hpo, doublequote=True)
+
     # if it contains PII do not check data types
     # TODO: combine with else condition (check data types)
     elif file_name in pii_table_list:
-        data = pd.read_sql(query, conn)
-        is_header_added = False
-        with open(file_path, 'w', newline='') as csvfile:
-            csv_writer = csv.writer(csvfile, delimiter=delimiter_hpo, quotechar=quotechar_hpo, quoting=csv.QUOTE_ALL)
-            if not is_header_added:
-                csv_writer.writerow(data.columns)
-                is_header_added = True
-            for row in tqdm(data.itertuples(index=False), total=data.shape[0]):
-                csv_writer.writerow(row)
+        data = pd.read_sql_query(query, conn)
+        chunks = np.array_split(data.index, math.ceil(data.shape[0]/rows_allowed))
+        for chunk, subset in enumerate(tqdm(chunks)):
+            if chunk == 0:
+                data.iloc[subset].to_csv(file_path, index=False, mode='w', sep=',', quoting=csv.QUOTE_NONNUMERIC, quotechar=quotechar_hpo, doublequote=True)
+            else:
+                data.iloc[subset].to_csv(file_path, index=False, mode='a', header=False, sep=',', quoting=csv.QUOTE_NONNUMERIC, quotechar=quotechar_hpo, doublequote=True)
+
     # otherwise validate data types for all columns and output csv
     else:
-        data = pd.read_sql(query, conn, chunksize=50000)
-        is_header_added = False
-        with open(file_path, 'w', newline='') as csvfile:
-            csv_writer = csv.writer(csvfile, delimiter=delimiter_hpo, quotechar=quotechar_hpo, quoting=csv.QUOTE_ALL)
-            for batch in data:
-                if file_name in table_name_list:
-                    batch = change_col_type(omop_check_files, batch, file_name)
-                else:
-                    pass
-                if not is_header_added:
-                    csv_writer.writerow(batch.columns)
-                    is_header_added = True
-                for row in tqdm(batch.itertuples(index=False), total=len(batch)):
-                    csv_writer.writerow(row)
+        datatypes = omop_check_files[file_name]
+        parse_dates_list = parse_dates[file_name]
+        chunks = pd.read_sql_query(query, conn, dtype=datatypes, parse_dates=parse_dates_list, chunksize=rows_allowed)
+        for chunk, subset in enumerate(tqdm(chunks)):
+            subset = subset.replace('None', '')
+            if chunk == 0:
+                subset.to_csv(file_path, index=False, mode='w', sep=',', quoting=csv.QUOTE_NONNUMERIC, quotechar=quotechar_hpo, doublequote=True)
+            else:
+                subset.to_csv(file_path, index=False, mode='a', header=False, sep=',', quoting=csv.QUOTE_NONNUMERIC, quotechar=quotechar_hpo, doublequote=True)
 
 
 def clean_note_text(df):
-    ''' 
+    '''
     This function will take in a dataframe and replace extra carriage returns found in the note_text column of certain notes
 
     Args:
         df: dataframe to be cleaned
-    
+
     Returns:
         df: dataframe with carriage returns removed
 
     Raises:
         N/A
-    
+
     '''
     if 'note_text' in df:
         df['note_text'] = df['note_text'].str.replace('&#x0D; &#x0D;','\n')
@@ -87,20 +81,20 @@ def clean_note_text(df):
 
 
 def format_json(df):
-    ''' 
+    '''
     This function takes in a list of dataframes and paritions rows that require removal of erroneous characters from the note_text column. The replaced/formatted text is then reinserted into the data frame row and then the entire data frame is converted to a json object string.
 
     Args:
         df: dataframe to be converted to json
-    
+
     Returns:
         json_output: string output by pandas.to_json containing a json string of the following format {key1: value1, key2:value2, ...}
 
     Raises:
         N/A
-    
+
     '''
-    
+
     # Return tuple (x,y) -> (boolean, df_partition)
     dataframes= [(x,y) for x, y in df.groupby(df['note_source_value'].str.contains('ORDER_PROC_ID:'))]
     # Go through each tuple
@@ -136,7 +130,7 @@ def export_to_jsonl(file_path, query, conn):
         json_file.write(json_notes)
         json_file.close()
 
-    
+
 
 
 def export_omop_file(table_name, query_path, output_path, connection, omop_check_files, empty_list, db_properties, person_list):

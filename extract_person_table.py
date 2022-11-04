@@ -13,6 +13,7 @@ def read_write_person_file(db_properties, conn, omop_files, parse_dates):
     person_query = open(os.path.join(query_path, 'person.sql'), 'r')
     person_query_script = person_query.read().format(db_properties['database'], db_properties['schema'])
     person_table = pd.read_sql_query(person_query_script, conn, dtype=omop_files['person'], parse_dates=parse_dates['person'])
+    person_table['birth_datetime'] = person_table['birth_datetime'].dt.strftime('%Y-%m-%d %H:%M:%S.%f')
     person_list = person_table['person_id'].to_list()
     person_list = str(person_list).replace('[', '').replace(']', '')
     ###Export person table

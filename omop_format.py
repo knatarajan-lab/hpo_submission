@@ -27,7 +27,9 @@ def generate_omop_format(root_path):
     for file_path in all_json:
         file_found = re.search(r"omop(\\|\/)(.+).json", file_path)
         col_list: Dict[Any, Any] = {}
-        parse_date_list = []
+        parse_date_list: Dict[Any, Any]= {}
+        date_fmt = '%Y-%m-%d'
+        timestamp_fmt = '%Y-%m-%d %H:%M:%S'
         if type(file_found) != 'NoneType':
             file_name = file_found.group(2)
             with open(file_path, encoding="utf8") as file:
@@ -39,8 +41,10 @@ def generate_omop_format(root_path):
                         col_list[col['name']] = str
                     elif col['type'] == 'float':
                         col_list[col['name']] = np.float64
-                    elif col['type'] in ('date', 'timestamp'):
-                        parse_date_list.append(col['name'])
+                    elif col['type'] == 'date':
+                        parse_date_list[col['name']] = date_fmt
+                    elif col['type'] == 'timestamp':
+                        parse_date_list[col['name']] = timestamp_fmt 
                 omop_files[file_name] = col_list
                 parse_date_dict[file_name] = parse_date_list
     return omop_files, parse_date_dict

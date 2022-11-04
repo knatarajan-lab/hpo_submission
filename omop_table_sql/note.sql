@@ -1,4 +1,5 @@
-SELECT [note_id]
+SELECT DISTINCT
+       [note_id]
       ,[person_id]
       ,[note_date]
       ,[note_datetime]

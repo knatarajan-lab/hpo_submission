@@ -1,4 +1,5 @@
-SELECT [procedure_occurrence_id]
+SELECT DISTINCT
+       [procedure_occurrence_id]
       ,[person_id]
       ,[procedure_concept_id]
       ,[procedure_date]

@@ -1,4 +1,5 @@
-SELECT [visit_occurrence_id]
+SELECT DISTINCT
+       [visit_occurrence_id]
       ,v.[person_id]
       ,[visit_concept_id]
       ,[visit_start_date]

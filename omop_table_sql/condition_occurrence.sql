@@ -1,5 +1,6 @@
 /****** Script for SelectTopNRows command from SSMS  ******/
-SELECT [condition_occurrence_id]
+SELECT DISTINCT
+       [condition_occurrence_id]
       ,[person_id]
       ,[condition_concept_id]
       ,[condition_start_date]

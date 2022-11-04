@@ -1,5 +1,5 @@
 /****** Script for SelectTopNRows command from SSMS  ******/
-SELECT 
+SELECT DISTINCT
 [drug_exposure_id]
 ,[person_id]
 ,[drug_concept_id]

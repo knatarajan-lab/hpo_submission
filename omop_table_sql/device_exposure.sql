@@ -1,4 +1,5 @@
-SELECT [device_exposure_id]
+SELECT DISTINCT
+       [device_exposure_id]
       ,de.[person_id]
       ,[device_concept_id]
       ,[device_exposure_start_date]

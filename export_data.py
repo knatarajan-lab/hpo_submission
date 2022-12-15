@@ -73,7 +73,8 @@ def clean_note_text(df):
     '''
     if 'note_text' in df:
         df['note_text'] = df['note_text'].str.replace('&#x0D; &#x0D;','\n')
-        df['note_text'] = df['note_text'].str.replace('.&#x0D;','.\n')
+        df['note_text'] = df['note_text'].str.replace(' &#x0D;',' ')
+        df['note_text'] = df['note_text'].str.replace('\.&#x0D;','. ')
         df['note_text'] = df['note_text'].str.replace('&#x0D;',' ')
         df['note_text'] = df['note_text'].str.replace('#x0D;','')
 
@@ -94,7 +95,7 @@ def format_json(df):
         N/A
 
     '''
-
+    
     # Return tuple (x,y) -> (boolean, df_partition)
     dataframes= [(x,y) for x, y in df.groupby(df['note_source_value'].str.contains('ORDER_PROC_ID:'))]
     # Go through each tuple
@@ -115,11 +116,9 @@ def format_json(df):
 
 
 def spaces_to_newline(input_text):
-    search = (input_text.find('    ') != -1) or (input_text.find('   ') != -1)
-    if search:
-        clean_text = input_text.replace('    ', '\n').replace('   ', '\n')
-    else:
-        clean_text = input_text.replace('  ', '\n')
+    
+    clean_text = input_text.replace('    ', '\n').replace('   ', '\n')
+    clean_text = input_text.replace('\r', '')
     collapsed_newline_text = re.sub(r'\n+', '\n', clean_text)
     return collapsed_newline_text
 
@@ -133,7 +132,7 @@ def export_to_jsonl(file_path, query, conn):
 
 
 
-def export_omop_file(table_name, query_path, output_path, connection, omop_check_files, empty_list, db_properties, person_list):
+def export_omop_file(table_name, query_path, output_path, connection, omop_check_files, parse_dates, empty_list, db_properties, person_list):
     query = open(os.path.join(query_path, f'{table_name}.sql'), 'r')
     query_script = query.read()
     if 'person_id' in query_script:

@@ -1,5 +1,4 @@
-
-  SELECT TOP(2)(SELECT [note_id]
+  SELECT TOP(5) [note_id]
       ,n.[person_id]
       ,[note_date]
       ,[note_datetime]
@@ -13,7 +12,6 @@
       ,n.[visit_occurrence_id]
       ,n.[visit_detail_id]
       ,[note_source_value]
-	  FOR JSON PATH)
   FROM [ohdsi_cumc_hpo].[dbo].[note] n
     left join [ohdsi_cumc_hpo].[dbo].visit_occurrence v
     on n.visit_occurrence_id = v.visit_occurrence_id
@@ -26,5 +24,5 @@
          or d.death_date is null)
          and n.note_text is not null
          and n.note_text != ''
-
+         and note_source_value = 'ORDER_PROC_ID:218435022'
 

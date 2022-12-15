@@ -31,19 +31,20 @@ def main():
 
 
     # Test speed of json library/pandas to convert to json
-    with open('notes.sql', 'r') as query2:
+    with open('test_notes.sql', 'r') as query2:
         original_sql = query2.read()
         
         # Test speed of sql query with FOR JSON PATH
         t0= perf_counter()
         test_df2 = pd.read_sql_query(original_sql, conn)
+
+        print(test_df2['note_source_value'])
         
         # Separate df into notes w/ note_source_value like ORDER_PROC_ID: and those without 
         # TODO: create function to format split dataframes
-        
         json_output = ed.format_json(test_df2)
 
-        with open('json_output_test.txt', 'w', newline='') as json_file:
+        with open('output_test.txt', 'w', newline='') as json_file:
             json_file.write(json_output)
             json_file.close()
 

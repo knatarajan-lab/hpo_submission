@@ -1,5 +1,5 @@
 
-  SELECT TOP (100)[note_id]
+  SELECT [note_id]
       ,n.[person_id]
       ,[note_date]
       ,[note_datetime]
@@ -25,5 +25,3 @@
          or d.death_date is null)
          and n.note_text is not null
          and n.note_text != ''
-
-

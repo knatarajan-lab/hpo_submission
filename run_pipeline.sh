@@ -16,8 +16,17 @@ cd /project/hpo/submission_folder
 mkdir "$(date +'%Y-%m-%d')-v1"
 
 cd /project/hpo/hpo_submission/HPO_submission
+
+#copy csv files into submission folder
 for f in *.csv
 do
   cp -v "$f" /project/hpo/submission_folder/"$(date +'%Y-%m-%d')-v1"/${f%.csv}.csv
+
+done
+
+#copy jsonl file into submission folder
+for j in *.jsonl
+do
+  cp -v "$j" /project/hpo/submission_folder/"$(date +'%Y-%m-%d')-v1"/${j%.jsonl}.jsonl
 
 done

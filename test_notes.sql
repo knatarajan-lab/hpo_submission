@@ -12,8 +12,8 @@
       ,n.[visit_occurrence_id]
       ,n.[visit_detail_id]
       ,[note_source_value]
-  FROM [ohdsi_cumc_hpo].[dbo].[note] n
-    left join [ohdsi_cumc_hpo].[dbo].visit_occurrence v
+  FROM [dbo].[note] n
+    left join [dbo].visit_occurrence v
     on n.visit_occurrence_id = v.visit_occurrence_id
     and n.person_id = v.person_id
   left join death d
@@ -24,5 +24,4 @@
          or d.death_date is null)
          and n.note_text is not null
          and n.note_text != ''
-         and note_source_value = 'ORDER_PROC_ID:218435022'
 

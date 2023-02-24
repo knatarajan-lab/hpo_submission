@@ -81,6 +81,7 @@ thumbs.db
 Desktop.ini
 desktop.ini
 __MACOSX/
+.idea/
 
 ##############################
 ## Python

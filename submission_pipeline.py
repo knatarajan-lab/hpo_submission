@@ -6,7 +6,6 @@ from omop_format import generate_omop_format
 from extract_person_table import read_write_person_file
 from export_data import export_omop_file
 from patient_status import extract_patient_status
-from extract_note_txt import extract_note_txt
 
 
 def main():

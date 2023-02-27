@@ -1,4 +1,3 @@
-[DEFAULT]
 [submodule "aou-ehr-file-check"]
 	path = aou-ehr-file-check
 	url = git@github.com:all-of-us/aou-ehr-file-check.git

@@ -18,9 +18,9 @@
     and n.person_id = v.person_id
   left join death d
   on n.person_id = d.person_id
-  where (d.death_date > '2015-12-31' 
+  where (d.death_date > '2017-01-01'
          and n.note_date <= d.death_date 
-         or d.death_date <= '2015-12-31'
+         or d.death_date <= '2017-01-01'
          or d.death_date is null)
          and n.note_text is not null
          and n.note_text != ''
